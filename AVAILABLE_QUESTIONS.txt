@@ -1,0 +1,237 @@
+================================================================================
+                    MAS SYSTEM - AVAILABLE TEST QUESTIONS
+================================================================================
+
+This document contains ALL possible questions you can ask the Multi-Agent 
+Support Resolver system based on the current database seeding.
+
+The system has 4 accounts, 4 transactions, and 3 policies.
+
+================================================================================
+ACCOUNT OVERVIEW
+================================================================================
+
+ACCOUNT 1: ACC001 - Nimal Perera
+  • Type: Savings
+  • Status: Active ✓
+  • Balance: LKR 125,000.50
+  • Transactions:
+    - TXN001: City Supermarket, LKR 4,500 (Posted 2 days ago)
+    - TXN004: Streaming Service, LKR 3,200 (Posted 35 days ago - TOO OLD TO DISPUTE)
+
+ACCOUNT 2: ACC002 - Kavindi Silva
+  • Type: Current
+  • Status: Active ✓
+  • Balance: LKR 45,200.00
+  • Transactions:
+    - TXN002: Online Electronics, LKR 12,500 (Pending 1 day - CANNOT DISPUTE YET)
+
+ACCOUNT 3: ACC003 - Ahan Fernando
+  • Type: Savings
+  • Status: Restricted ⚠️ (May affect access)
+  • Balance: LKR 8,300.75
+  • Transactions:
+    - TXN003: Fuel Station, LKR 9,800 (Posted 18 days ago - ELIGIBLE FOR DISPUTE)
+
+ACCOUNT 4: ACC004 - Sajini Jayasuriya
+  • Type: Current
+  • Status: Active ✓
+  • Balance: LKR 2,500.00
+  • Transactions: NONE
+
+================================================================================
+CATEGORY 1: TRANSACTION DISPUTE QUESTIONS
+================================================================================
+
+[These test the dispute_policy - disputes within 30 days for posted transactions]
+
+1. "My account ACC001 has a suspicious transaction TXN001. I want to dispute it."
+   ✓ ELIGIBLE: Posted 2 days ago, within 30-day window
+
+2. "I want to dispute the transaction TXN001 on my account ACC001."
+   ✓ ELIGIBLE: Posted 2 days ago
+
+3. "Hello, I have a problem with transaction TXN001 on account ACC001. Can you help?"
+   ✓ ELIGIBLE: Posted 2 days ago
+
+4. "My card was charged LKR 4,500 at City Supermarket (TXN001). This is fraudulent!"
+   ✓ ELIGIBLE: Posted 2 days ago (account ID must be mentioned)
+
+5. "I dispute the transaction TXN002 on account ACC002."
+   ✗ NOT ELIGIBLE: Pending transaction cannot be disputed until posted
+
+6. "Please dispute transaction TXN002. I didn't authorize LKR 12,500 for Online Electronics."
+   ✗ NOT ELIGIBLE: Pending (1 day old)
+
+7. "The transaction TXN003 on my account ACC003 looks suspicious."
+   ✓ ELIGIBLE: Posted 18 days ago, within 30-day window
+
+8. "I need to dispute TXN003 (Fuel Station, LKR 9,800) from account ACC003."
+   ✓ ELIGIBLE: Posted 18 days ago
+
+9. "Can I dispute the streaming service charge TXN004 on ACC001?"
+   ✗ NOT ELIGIBLE: Posted 35 days ago, exceeds 30-day dispute window (TOO OLD)
+
+10. "I want to dispute TXN004. It was on my account ACC001 from the streaming service."
+    ✗ NOT ELIGIBLE: Posted 35 days ago (too old)
+
+================================================================================
+CATEGORY 2: CARD BLOCK REQUESTS
+================================================================================
+
+[These test the card_block_policy - immediate card blocking]
+
+1. "Please block my card for account ACC001 immediately."
+   ✓ ELIGIBLE: Account exists and is active
+
+2. "My card is compromised. Block it now! Account ACC002."
+   ✓ ELIGIBLE: Account is active
+
+3. "Emergency! I lost my card. Block it. Account is ACC003."
+   ✓ ELIGIBLE: Even though account is restricted, card can be blocked
+
+4. "Block my card linked to account ACC004."
+   ✓ ELIGIBLE: Account is active
+
+5. "I need an emergency card block for ACC001."
+   ✓ ELIGIBLE: Same-session blocking available
+
+================================================================================
+CATEGORY 3: ACCOUNT ACCESS ISSUES
+================================================================================
+
+[These test the account_access_policy - verification required]
+
+1. "I cannot access my account ACC001. Can you help?"
+   ✓ REQUIRES VERIFICATION: Need to verify identity
+
+2. "I forgot my password for account ACC002. What should I do?"
+   ✓ REQUIRES VERIFICATION
+
+3. "My account ACC003 is showing as restricted. Why?"
+   ✓ ELIGIBLE: Account status is Restricted (special handling needed)
+
+4. "I'm locked out of account ACC004. Help me recover it."
+   ✓ REQUIRES VERIFICATION
+
+5. "I can't log into my account ACC001."
+   ✓ REQUIRES VERIFICATION
+
+================================================================================
+CATEGORY 4: TRANSACTION STATUS QUERIES
+================================================================================
+
+[These queries check transaction status without modifying anything]
+
+1. "What is the status of transaction TXN001 on my account ACC001?"
+   ✓ QUERYABLE: Posted transaction
+
+2. "Can you check the status of TXN002?"
+   ✓ QUERYABLE: Pending transaction
+
+3. "I need information about the transaction TXN003 from account ACC003."
+   ✓ QUERYABLE: Posted transaction
+
+4. "Check my last transaction on ACC001."
+   ✓ QUERYABLE: Multiple transactions available
+
+5. "What happened with TXN004?"
+   ✓ QUERYABLE: Posted transaction (over 30 days, cannot dispute but can query)
+
+================================================================================
+CATEGORY 5: GENERAL/INFORMATION QUERIES
+================================================================================
+
+[These don't match specific account IDs - may get generic responses]
+
+1. "What is this system about?"
+   → Generic system information response
+
+2. "Hi, can you help me?"
+   → General greeting, request for clarification
+
+3. "How does this bank work?"
+   → Information query
+
+4. "What services do you offer?"
+   → General service information
+
+5. "I have a question about my account."
+   → Missing account ID - request for more details
+
+================================================================================
+CATEGORY 6: EDGE CASES & SPECIAL SCENARIOS
+================================================================================
+
+1. "Block my card ACC003 (restricted account)"
+   • Account is restricted, but card blocking still allowed
+
+2. "Dispute TXN004 from ACC001 (35 days old)"
+   • Transaction is OUTSIDE 30-day window - should be rejected
+
+3. "Dispute TXN002 (pending transaction)"
+   • Cannot dispute pending - must wait for posting
+
+4. "Query account ACC004 (no transactions)"
+   • Account exists but has no transactions
+
+5. "Multiple requests: Block card for ACC001 AND dispute TXN001"
+   • Both eligible - both should be approved
+
+================================================================================
+CATEGORY 7: SAMPLE DEMO CASES
+================================================================================
+
+These are the 5 pre-loaded demo messages:
+
+1. "Hello, my account ACC001 has a suspicious transaction TXN001. I want to dispute it."
+   → Expected: Dispute opened (✓ within 30-day window)
+
+2. "Please block my card linked to account ACC002 immediately."
+   → Expected: Card blocked (✓ immediate block available)
+
+3. "What is the status of my transaction TXN002 for account ACC002?"
+   → Expected: Status query response (Pending transaction)
+
+4. "I cannot access my account ACC003, can you help me recover it?"
+   → Expected: Account access help (requires verification)
+
+5. "I forgot my account number. Can you help with card security?"
+   → Expected: General query (no account ID - generic response)
+
+================================================================================
+TESTING RECOMMENDATIONS
+================================================================================
+
+✅ SHOULD SUCCEED:
+  • Dispute TXN001 (ACC001, 2 days old)
+  • Dispute TXN003 (ACC003, 18 days old)
+  • Block card for any active account
+  • Query any transaction status
+  • Access help for any account
+
+❌ SHOULD FAIL/REJECT:
+  • Dispute TXN004 (ACC001, 35 days - too old)
+  • Dispute TXN002 (ACC002, pending - not posted yet)
+  • Query account ACC004 when it has no transactions
+
+⚠️  SPECIAL CASES:
+  • ACC003 is "Restricted" - may have limited functionality
+  • TXN002 is "Pending" - cannot be disputed
+  • TXN004 is outside dispute window (35 days > 30 days)
+
+================================================================================
+HOW TO USE THIS FILE
+================================================================================
+
+1. Copy any question from this file
+2. Paste it into the MAS system (interactive or demo mode)
+3. The system will process through:
+   - TRIAGE AGENT: Classify intent (dispute/block/access/query)
+   - ACCOUNT INTELLIGENCE: Lookup account & transaction from database
+   - POLICY AGENT: Apply business rules (LLM decision)
+   - RESPONSE AGENT: Generate customer response (LLM generated)
+
+4. Check the final response and trace logs (logs/agent_trace.jsonl)
+
+================================================================================
