@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Project runtime files (generated — do not commit)
+data/ecommerce.db
+logs/agent_trace.jsonl
+outputs/
+
+# IDE
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+config.bat
+node_modules
